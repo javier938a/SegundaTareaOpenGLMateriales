@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/javier/Documentos/Archivos/Algoritmos Graficos/SegundaTareaOpenGLMateriales/efera3D.cpp
+GL/gl.h
+-
+GL/glut.h
+-
+stdlib.h
+-
+iostream
+-
+

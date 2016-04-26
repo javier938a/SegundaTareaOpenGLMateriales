@@ -1,0 +1,1 @@
+/home/javier/Documentos/Archivos/Algoritmos Graficos/SegundaTareaOpenGLMateriales/build/CMakeFiles/efera3D.dir

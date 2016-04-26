@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/efera3D.dir/efera3D.cpp.o  -o efera3D -rdynamic -lGLU -lGL -lSM -lICE -lX11 -lXext -lglut -lXmu -lXi 
