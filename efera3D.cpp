@@ -3,20 +3,30 @@
 #include <stdlib.h>
 #include <iostream>
 using namespace std;
-
+//Carlos Javier Ochoa Torres
+//Jacob Isaac Albarenga Menjibar
 //Definiendo variable que se modificara cada vez que se aplica un color de material diferente
 int tipoMaterial=0;
+int ancho=800;
+int alto=600;
+GLfloat punto_luz[3];
+
 void init(void)
-{
+{ 
+        punto_luz[0]=1.0;
+        punto_luz[1]=1.0;
+        punto_luz[2]=1.0;
 	// Activamos la fuente de luz
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0); //Activamos las luces en 0
         glEnable(GL_LIGHT5); //Activamos las luces en 0
 	glDepthFunc(GL_LESS); //comparación de profundidad
-	glEnable(GL_DEPTH_TEST); //activa GL_DEPTH_TEST
+	glEnable(GL_DEPTH_TEST); //activa GL_DEPTH_TEST	
+	glLightfv(GL_LIGHT0,GL_POSITION,punto_luz);
+
 }
 
-void AplicarMaterial(GLfloat mat_ambient[],GLfloat mat_diffuse[],GLfloat mat_specular[],GLfloat shinness[]){
+void AplicarMaterial(GLfloat mat_ambient[],GLfloat mat_diffuse[],GLfloat mat_specular[],GLfloat shinness[]){//Creando la funcion que recibe como parametro los diferentes materiales de color de material ambiente diffusse specular shiness
       	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
@@ -33,11 +43,13 @@ void reshape(int w, int h)
         //gluPerspective(45.0f, (GLfloat)w/(GLfloat)h, 5.0f, -20.0f);
 	// Usamos proyeccion ortogonal
 	 //glFrustum(-1.0,1.0,-1.0,1.0,1.5,20.0);//estableciendo la proyeccion ortogonal
-	 glOrtho(-300, 300, -300, 300, -300, 300);
+	 glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 	// Activamos la matriz de modelado/visionado.
 	glMatrixMode(GL_MODELVIEW);
 	// "Limpiamos" la matriz
 	glLoadIdentity();
+	ancho = w;
+        alto = h;
 }
 void AplicarMaterial(int tipoMat){//Funcion que me aplicara material a la efera
    GLfloat mat_ambient[3];
@@ -138,27 +150,39 @@ void AplicarMaterial(int tipoMat){//Funcion que me aplicara material a la efera
            }
 }
 
+
 void display(void)
 {
+        glLightfv(GL_LIGHT0,GL_POSITION,punto_luz);//UBICANDO EL PUNTO DE LUZ en las coordenadas "x", "y" ,"z" en el vector Punto de luz el cual se modificara cuando se de clic en la ventana  
 	// "Limpiamos" el frame buffer con el color de "Clear", en este
 	// caso negro.
+       
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode( GL_MODELVIEW_MATRIX );
 	glLoadIdentity();
-        gluLookAt(1.0,2.0,3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0); 
-	// Rotacion de 25 grados en torno al eje x
-	glRotated(25.0, 1.0, 0.0, 0.0);
-	// Rotacion de -30 grados en torno al eje y
-	glRotated(-30.0, 0.0, 1.0, 0.0);
-	// Dibujamos una "Tetera" y le aplico el material
 	glPushMatrix();
 	//setMaterial
+        
         AplicarMaterial(tipoMaterial);//Aplicando material a la efera 
-	glutSolidSphere (180, 160, 160);
+	glutSolidSphere (0.5, 160, 160);//Dibujando la efera solida
+
 //glutWireSphere(2.0,150,150); 
 	glFlush();
 }
+void raton(int button, int stute, int x,int y){
+    GLfloat tras_x1 = -1*(float(ancho)/2-float(x))/(float(ancho)/2);//convirtiendo las coordenadas x a coordenadas entre cero y 1
+    GLfloat tras_y1 = (float(alto)/2 - float(y))/(float(alto)/2);//convirtiendo y a coordenadas entre 0 y 1
+ cout<<"button: "<<button<<" stute: "<<stute<<" x: "<<x<<" y: "<<y<<endl; 
+ if(button == GLUT_LEFT_BUTTON && stute == GLUT_UP){//programando el boton izquierdo de tal forma que cuando de clic en un punto de luz se ubique en la coordenada "x" y "y" que el metodo raton recibe como parametro
+    punto_luz[0]=tras_x1;//ubicando la posision y en la posision 0 de el vector punto_luz
+    punto_luz[1] = tras_y1;//ubicando la posision y en la posision 1 de el vector punto_luz
+    punto_luz[2] = 0.5;//Estableciendo un valor fijo de 0.5 en la posision 2 que le corresponde a la coorenada "Z" 
+    display();//llamando a display para que redibuje la efera en el espacio y coloque la luz en las coordenadas obtenidas de raton
+   cout<<"punto en x "<<tras_x1<<"punto en y: "<<tras_y1<<endl;
+   cout<<"he liberado el boton izquierdo"<<endl;
+ }
 
+}
 
 // Función para controlar teclas normales del teclado.
 void keyboard(unsigned char key, int x, int y)
@@ -166,27 +190,32 @@ void keyboard(unsigned char key, int x, int y)
     //control de teclas que hacen referencia a Escalar y transladar el cubo en los ejes X,Y,Z.
     switch (key)
     {
+          case 'c':
 	  case 'C':
              tipoMaterial=1;//Modificando variable
              cout<<"Color cooper"<<endl;
           break;
+          case 'r':
           case 'R':
              tipoMaterial=2;//Modificando variable
              cout<<"Color Red plastic"<<endl;
           break;
+          case 'g':
           case 'G':
              tipoMaterial=3;//Modificando variable
              cout<<"Color gold"<<endl;
           break;
+          case 'b':
           case 'B':
             tipoMaterial=4;//Modificando variable
             cout<<"Color Brass"<<endl;
             break;
+          case 's':
           case 'S':
             tipoMaterial=5;//Modificando variable
             cout<<"color Silver"<<endl;
           break;
-	     
+          case 'Q':     
 	  case 'q':
           exit(0);			// exit
     }
@@ -200,7 +229,7 @@ int main(int argc, char **argv)
 	glutInitDisplayMode (GLUT_RGB | GLUT_DEPTH);
 	// Definimos una ventana de medidas 800 x 600 como ventana
 	// de visualizacion en pixels
-	glutInitWindowSize (800, 600);
+	glutInitWindowSize (ancho, alto);
 	// Posicionamos la ventana en la esquina superior izquierda de
 	// la pantalla.
 	glutInitWindowPosition (0, 0);
@@ -212,6 +241,7 @@ int main(int argc, char **argv)
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
         glutKeyboardFunc(keyboard);
+        glutMouseFunc(raton);
 	glutMainLoop();
 	return 0;
 }
